@@ -34,9 +34,7 @@ function easyreply($) {
 				if (!prev.length) {
 					prev = message.closest('.monologue').prevAll('.monologue').eq(0).find('.message:last');
 				}
-				if (prev.length) {
-					message = prev;
-				}
+				message = prev;
 			}
 			if (message.length) {
 				newText = ':' + message.attr('id').split('-')[1] + ' ' + old.split(' ').slice(1).join(' ');
