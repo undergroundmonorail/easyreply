@@ -60,4 +60,8 @@ function easyreply($) {
 	// i don't know what this means but doorknob's code has it ¯\_(ツ)_/¯
 	var kdevts = $('#input').data('events').keydown;
 	kdevts.unshift(kdevts.pop());
+	// doorknob: "For the record, it moves the last keydown event to the front of the "list" of events.
+	// "That way your function is called before SE's default functions."
+	// "Otherwise, the message would be sent *before* the replacement would be made."
+	// thanks doorknob
 }
