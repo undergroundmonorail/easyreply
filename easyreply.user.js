@@ -4,6 +4,7 @@
 // @author monorail
 // @version 0.1
 // @description easily respond to a user's last message in se chat
+// @grant none
 // @copyright MIT
 // @include *://chat.stackoverflow.com/*
 // @include *://chat.stackexchange.com/*
