@@ -48,7 +48,7 @@ function easyreply($) {
 		if (firstWord.slice(0, PREFIX.length) == PREFIX && firstWord.slice(-SUFFIX.length) == SUFFIX) {
 			// go backwards through the messages until finding one that is by the mentioned user OR there are no more messages
 			var message = $('.message:last');
-			while (message.length && firstWord != PREFIX + messageAuthor(message) + SUFFIX) {
+			while (message.length && firstWord.slice(1,-1).toLowerCase() != messageAuthor(message).toLowerCase() ) {
 				var prev = message.prev('.message'); // go up one message
 				if (!prev.length) { // handle monologue barriers
 					// stole this code wholesale from doorknob. i mostly understand it.
