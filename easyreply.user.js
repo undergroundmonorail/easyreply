@@ -25,10 +25,15 @@ withJQuery(easyreply);
 
 function easyreply($) {
 	// OPTIONS
-	// change the identifiers to look for on either end of a username
-	var PREFIX = '@';
-	var SUFFIX = '@';
+	// prefix/suffix of username to reply to
+	var R_PREFIX = '@';
+	var R_SUFFIX = '@';
+	// prefix/suffix of username to star
+	var S_PREFIX = '@';
+	var S_SUFFIX = '*';
 	
+	var input = $('#input');
+
 	function messageAuthor(message) {
 		// a group of continuous messages by the same user is a "monologue"
 		// go up to the monologue, then find the author
@@ -37,18 +42,10 @@ function easyreply($) {
 		return message.parent().parent().children('.signature').children('.username').text().replace(/ /g, '');
 	}
 	
-	function getNewText(old) {
-		// runs just before sending a message
-		// takes text of message about to be sent
-		// returns message to send instead
-		var newText = old; // by default don't change anything
-		var firstWord = old.split(' ')[0];
-		
-		// if the first word denotes a reply
-		if (firstWord.slice(0, PREFIX.length) == PREFIX && firstWord.slice(-SUFFIX.length) == SUFFIX) {
+	function lastMessageFrom(author) {
 			// go backwards through the messages until finding one that is by the mentioned user OR there are no more messages
 			var message = $('.message:last');
-			while (message.length && firstWord.slice(1,-1).toLowerCase() != messageAuthor(message).toLowerCase() ) {
+			while (message.length && author.toLowerCase() !== messageAuthor(message).toLowerCase()) {
 				var prev = message.prev('.message'); // go up one message
 				if (!prev.length) { // handle monologue barriers
 					// stole this code wholesale from doorknob. i mostly understand it.
@@ -56,23 +53,37 @@ function easyreply($) {
 				}
 				message = prev;
 			}
-			if (message.length) { // if a message was found
-				// reply syntax is ':[message id]'
-				// messages have the attribute 'id', containing 'message-[message id]'
-				// put a colon, everything after the hyphen in the id, then the original message minus the first word
-				newText = ':' + message.attr('id').split('-')[1] + ' ' + old.split(' ').slice(1).join(' ');
-			}
-		}
-		return newText;
+			return message;	
 	}
 	
-	var input = $('#input');
+	function replyToMessage(message) {
+		if (message.length) { // if a message was found
+			// reply syntax is ':[message id]'
+			// messages have the attribute 'id', containing 'message-[message id]'
+			// put a colon, everything after the hyphen in the id, then the original message minus the first word
+			input[0].value = ':' + message.attr('id').split('-')[1] + ' ' + input[0].value.split(' ').slice(1).join(' ');
+		}
+		$('sayit-button').click(); // SLAM THAT SEND BUTTON
+	}
+1	
+	function starMessage(message) {
+		message.find('.stars:first .vote').click();
+	}
 	
 	input.keydown(function(e) {
-		if (e.which == 13) { // when enter key is pressed
+		if (e.which === 13) { // when enter key is pressed
 			e.preventDefault();
-			input[0].value = getNewText(input[0].value); // replace text in message box
-			$('sayit-button').click(); // SLAM THAT SEND BUTTON
+			
+			var firstWord = input[0].value.split(' ')[0];
+			var R_author = firstWord.slice(R_PREFIX.length, -R_SUFFIX.length); // author name if reply
+			var S_author = firstWord.slice(S_PREFIX.length, -R_SUFFIX.length); // author name if star
+			
+			if (R_PREFIX + R_author + R_SUFFIX === firstWord) {
+				replyToMessage(lastMessageFrom(R_author));
+			} else if (S_PREFIX + S_author + S_SUFFIX === firstWord) {
+				starMessage(lastMessageFrom(S_author));
+				input[0].value = ''; // no message is sent, clear input box manually
+			}
 		}
 	});
 	
