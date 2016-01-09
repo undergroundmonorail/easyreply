@@ -63,7 +63,6 @@ function easyreply($) {
 			// put a colon, everything after the hyphen in the id, then the original message minus the first word
 			input[0].value = ':' + message.attr('id').split('-')[1] + ' ' + input[0].value.split(' ').slice(1).join(' ');
 		}
-		$('sayit-button').click(); // SLAM THAT SEND BUTTON
 	}
 1	
 	function starMessage(message) {
